@@ -3,12 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- APP CUSTOMIZATION GUIDE: BROWSER TAB TITLE
-       You can change the text inside <title> below to rename the browser tab. -->
-  <title>Toastmasters Self Timer | Immersive Speech Timer</title>
-  
-  <!-- Google Fonts: Outfit (For clean, modern digits and headings) and Inter (For precise body copy) -->
+  <title>BEACON | Toastmasters Agenda Runner</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,316 +11,323 @@
 </head>
 <body class="theme-dark">
   <div id="app-container">
-    
-    <!-- Header with Wake Lock Indicator & Settings -->
+
+    <!-- ================================================================
+         HEADER
+    ================================================================ -->
     <header class="glass-panel main-header">
       <div class="logo-area">
-        <!-- APP CUSTOMIZATION GUIDE: LOGO ICON
-             You can replace the emoji "⏱️" below with another emoji or an <img> tag for a custom logo graphic. -->
         <div class="logo-icon">⏱️</div>
-        
-        <!-- APP CUSTOMIZATION GUIDE: APP BRAND NAME & SUBTITLE
-             - Modify the text inside <h1> below to change the primary brand logo name.
-             - The <span class="highlight"> tag makes that part of the text use a beautiful neon purple-to-pink gradient.
-             - Change the text inside <p> below to change the supporting description/subtitle. -->
         <div class="logo-text">
-          <h1>   <span class="highlight">BEACON</span></h1>
-          <p>Toastmasters Self Timer</p>
+          <h1><span class="highlight">BEACON</span></h1>
+          <p>Toastmasters Agenda Runner</p>
         </div>
       </div>
       <div class="header-badges">
         <span id="wakelock-status" class="badge badge-inactive">
           <span class="badge-dot"></span> Wake Lock: Inactive
         </span>
-        <span id="fullscreen-badge" class="badge badge-secondary">
-          🖥️ Window Mode
-        </span>
+        <span id="fullscreen-badge" class="badge badge-secondary">🖥️ Window Mode</span>
+        <!-- Header action buttons (shown only in agenda view) -->
+        <button id="btn-settings" class="btn-floating" title="Settings">⚙️ Settings</button>
+        <button id="btn-load-json" class="btn-floating" title="Load Agenda JSON">📥 Load</button>
+        <button id="btn-download-json" class="btn-floating" title="Download Agenda JSON">📤 Save</button>
+        <button id="btn-print-agenda" class="btn-floating" title="Print Agenda">🖨️ Print</button>
       </div>
     </header>
 
-    <!-- Main Content Area -->
     <main>
-      
-      <!-- View 1: Configuration Dashboard -->
-      <section id="setup-view" class="view-active">
-        <div class="dashboard-grid">
-          
-          <!-- Left Column: Configurations -->
-          <div class="config-column">
-            
-            <!-- Speaker details card -->
-            <div class="glass-card card-glow form-card">
-              <h2 class="section-title">🎤 Speaker Details</h2>
-              <div class="input-group">
-                <label for="speaker-name">Speaker Name</label>
-                <input type="text" id="speaker-name" placeholder="e.g., Jane Doe or 'Prepared Speech #1'" autocomplete="off">
-              </div>
+
+      <!-- ================================================================
+           VIEW 1: AGENDA EDITOR
+      ================================================================ -->
+      <section id="agenda-view" class="view-active">
+
+        <!-- Toolbar -->
+        <div class="agenda-toolbar glass-panel">
+          <div class="toolbar-left">
+            <div class="meeting-info-pill" id="meeting-info-pill">
+              <span id="pill-club">Club</span>
+              <span class="pill-sep">·</span>
+              <span id="pill-meeting">Meeting #</span>
+              <span class="pill-sep">·</span>
+              <span id="pill-date">Date</span>
+              <span class="pill-sep">·</span>
+              <span id="pill-time">Start time</span>
             </div>
-
-            <!-- Preset speech timing cards -->
-            <div class="glass-card card-glow timing-presets-card">
-              <h2 class="section-title">⏱️ Select Speech Preset</h2>
-              <div class="preset-grid">
-                
-                <button type="button" class="preset-btn active" data-preset="prepared" data-green="5" data-green-sec="0" data-yellow="6" data-yellow-sec="0" data-red="7" data-red-sec="0">
-                  <span class="preset-icon">📜</span>
-                  <span class="preset-name">Prepared Speech</span>
-                  <span class="preset-duration">5 - 7 mins</span>
-                  <span class="preset-details">G: 5m | Y: 6m | R: 7m</span>
-                </button>
-
-                <button type="button" class="preset-btn" data-preset="topics" data-green="1" data-green-sec="0" data-yellow="1" data-yellow-sec="30" data-red="2" data-red-sec="0">
-                  <span class="preset-icon">⚡</span>
-                  <span class="preset-name">Table Topics</span>
-                  <span class="preset-duration">1 - 2 mins</span>
-                  <span class="preset-details">G: 1m | Y: 1.5m | R: 2m</span>
-                </button>
-
-                <button type="button" class="preset-btn" data-preset="evaluation" data-green="2" data-green-sec="0" data-yellow="2" data-yellow-sec="30" data-red="3" data-red-sec="0">
-                  <span class="preset-icon">📋</span>
-                  <span class="preset-name">Evaluation</span>
-                  <span class="preset-duration">2 - 3 mins</span>
-                  <span class="preset-details">G: 2m | Y: 2.5m | R: 3m</span>
-                </button>
-
-                <button type="button" class="preset-btn" data-preset="icebreaker" data-green="4" data-green-sec="0" data-yellow="5" data-yellow-sec="0" data-red="6" data-red-sec="0">
-                  <span class="preset-icon">❄️</span>
-                  <span class="preset-name">Ice Breaker</span>
-                  <span class="preset-duration">4 - 6 mins</span>
-                  <span class="preset-details">G: 4m | Y: 5m | R: 6m</span>
-                </button>
-
-                <button type="button" id="custom-preset-btn" class="preset-btn" data-preset="custom">
-                  <span class="preset-icon">⚙️</span>
-                  <span class="preset-name">Custom Timing</span>
-                  <span class="preset-duration">User Defined</span>
-                  <span class="preset-details">Configure Below</span>
-                </button>
-
-              </div>
-            </div>
-
-            <!-- Custom Timing Form Panel (collapsible/expandable) -->
-            <div id="custom-timing-form" class="glass-card card-glow form-card collapsed">
-              <h2 class="section-title">🔧 Custom Thresholds Configuration</h2>
-              
-              <div class="input-group" style="margin-bottom: 1.5rem;">
-                <label for="custom-preset-name">Custom Preset Name</label>
-                <input type="text" id="custom-preset-name" value="Custom" placeholder="e.g., Prepared Speech #2" autocomplete="off">
-              </div>
-
-              <div class="custom-inputs-row">
-                
-                <div class="custom-input-col border-green">
-                  <span class="color-label text-green">🟢 Green (Min Limit)</span>
-                  <div class="time-inputs">
-                    <div class="number-input">
-                      <input type="number" id="custom-green-min" min="0" max="99" value="5" placeholder="Min">
-                      <span class="unit">m</span>
-                      <div class="spin-buttons">
-                        <button type="button" class="spin-btn up" tabindex="-1">▲</button>
-                        <button type="button" class="spin-btn down" tabindex="-1">▼</button>
-                      </div>
-                    </div>
-                    <div class="number-input">
-                      <input type="number" id="custom-green-sec" min="0" max="59" value="0" placeholder="Sec">
-                      <span class="unit">s</span>
-                      <div class="spin-buttons">
-                        <button type="button" class="spin-btn up" tabindex="-1">▲</button>
-                        <button type="button" class="spin-btn down" tabindex="-1">▼</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="custom-input-col border-yellow">
-                  <span class="color-label text-yellow">🟡 Yellow (Mid Point)</span>
-                  <div class="time-inputs">
-                    <div class="number-input">
-                      <input type="number" id="custom-yellow-min" min="0" max="99" value="6" placeholder="Min">
-                      <span class="unit">m</span>
-                      <div class="spin-buttons">
-                        <button type="button" class="spin-btn up" tabindex="-1">▲</button>
-                        <button type="button" class="spin-btn down" tabindex="-1">▼</button>
-                      </div>
-                    </div>
-                    <div class="number-input">
-                      <input type="number" id="custom-yellow-sec" min="0" max="59" value="0" placeholder="Sec">
-                      <span class="unit">s</span>
-                      <div class="spin-buttons">
-                        <button type="button" class="spin-btn up" tabindex="-1">▲</button>
-                        <button type="button" class="spin-btn down" tabindex="-1">▼</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="custom-input-col border-red">
-                  <span class="color-label text-red">🔴 Red (Max Limit)</span>
-                  <div class="time-inputs">
-                    <div class="number-input">
-                      <input type="number" id="custom-red-min" min="0" max="99" value="7" placeholder="Min">
-                      <span class="unit">m</span>
-                      <div class="spin-buttons">
-                        <button type="button" class="spin-btn up" tabindex="-1">▲</button>
-                        <button type="button" class="spin-btn down" tabindex="-1">▼</button>
-                      </div>
-                    </div>
-                    <div class="number-input">
-                      <input type="number" id="custom-red-sec" min="0" max="59" value="0" placeholder="Sec">
-                      <span class="unit">s</span>
-                      <div class="spin-buttons">
-                        <button type="button" class="spin-btn up" tabindex="-1">▲</button>
-                        <button type="button" class="spin-btn down" tabindex="-1">▼</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-              <div id="custom-validation-error" class="validation-error-msg hidden">
-                ⚠️ Timings must be sequential: Green &lt; Yellow &lt; Red
-              </div>
-            </div>
-
           </div>
-
-          <!-- Right Column: Settings, Start Button, Features Info -->
-          <div class="settings-column">
-            
-            <!-- Preferences / Settings -->
-            <div class="glass-card card-glow form-card">
-              <h2 class="section-title">⚙️ Preferences</h2>
-              
-              <div class="settings-list">
-                
-                <div class="setting-item">
-                  <div class="setting-desc">
-                    <span class="setting-label">Show Timer Digits</span>
-                    <span class="setting-hint">Displays actual numbers on color background</span>
-                  </div>
-                  <label class="switch">
-                    <input type="checkbox" id="setting-show-timer" checked>
-                    <span class="slider"></span>
-                  </label>
-                </div>
-
-                <div class="setting-item">
-                  <div class="setting-desc">
-                    <span class="setting-label">Prevent Screen Sleep (Wake Lock)</span>
-                    <span class="setting-hint">Keep screen awake while running</span>
-                  </div>
-                  <label class="switch">
-                    <input type="checkbox" id="setting-wake-lock" checked>
-                    <span class="slider"></span>
-                  </label>
-                </div>
-
-                <div class="setting-item">
-                  <div class="setting-desc">
-                    <span class="setting-label">Accelerated Demo Mode</span>
-                    <span class="setting-hint">1 second = 1 minute for quick testing</span>
-                  </div>
-                  <label class="switch">
-                    <input type="checkbox" id="setting-demo-mode">
-                    <span class="slider"></span>
-                  </label>
-                </div>
-
-              </div>
-            </div>
-
-            <!-- Speech start trigger -->
-            <div class="glass-card card-glow start-trigger-card">
-              <button id="btn-start-speech" class="action-btn btn-primary btn-pulse">
-                <span class="btn-icon">▶️</span> Start Speech Timer
-              </button>
-              <p class="start-hint">Transitions background color silently based on selections.</p>
-            </div>
-
+          <div class="toolbar-right">
+            <button class="toolbar-btn btn-add-section" id="btn-add-section">＋ Section Break</button>
+            <button class="toolbar-btn btn-add-speech" id="btn-add-ps">🎤 ＋ Prepared Speech</button>
+            <button class="toolbar-btn btn-add-item" id="btn-add-item">＋ Add Item</button>
+            <button class="toolbar-btn btn-run" id="btn-run-agenda">▶ Run Agenda</button>
           </div>
-
         </div>
 
-        <!-- Session History Logs -->
-        <div class="glass-card card-glow history-card">
-          <div class="history-header">
-            <h2 class="section-title">📊 Session History</h2>
-            <button id="btn-clear-history" class="badge badge-secondary action-badge">🧹 Clear Logs</button>
-          </div>
-          <div class="history-table-container">
-            <table id="history-table">
-              <thead>
-                <tr>
-                  <th>Speaker Name</th>
-                  <th>Preset / Type</th>
-                  <th>Milestones (G | Y | R)</th>
-                  <th>Actual Duration</th>
-                  <th>Status</th>
-                  <th>Finished At</th>
-                </tr>
-              </thead>
-              <tbody id="history-body">
-                <!-- Session data injected via JavaScript -->
-                <tr id="history-empty-row">
-                  <td colspan="6" class="text-muted text-center">No speeches timed in this session yet. Your records will appear here!</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <!-- Agenda Table -->
+        <div class="agenda-table-wrap glass-card">
+          <table class="agenda-table" id="agenda-table">
+            <thead>
+              <tr>
+                <th class="col-drag"></th>
+                <th class="col-start">Start</th>
+                <th class="col-dur">Min</th>
+                <th class="col-activity">Activity</th>
+                <th class="col-speaker">Speaker / Participant</th>
+                <th class="col-role">Role</th>
+                <th class="col-timing">🟢 / 🟡 / 🔴 (mm:ss)</th>
+                <th class="col-del"></th>
+              </tr>
+            </thead>
+            <tbody id="agenda-body">
+              <!-- Rows injected by JS -->
+            </tbody>
+          </table>
         </div>
 
       </section>
 
-      <!-- View 2: Active Timer Screen -->
+      <!-- ================================================================
+           VIEW 2: TIMER / RUN MODE
+      ================================================================ -->
       <section id="timer-view" class="view-hidden">
-        
-        <!-- Main timer background element -->
         <div id="immersive-bg" class="immersive-beacon bg-neutral">
-          
-          <!-- Immersive full page control overlay (shows when moving mouse / clicking screen) -->
           <div id="timer-overlay" class="overlay-panel">
-            
-            <!-- Minimal Floating Escape bar for pure screen mode -->
+
+            <!-- Top bar -->
             <div class="immersive-floating-bar">
-              <span id="immersive-speaker-badge">Jane Doe</span>
-              <span id="immersive-preset-badge">Prepared (5m - 7m)</span>
-              <button id="btn-toggle-fullscreen" class="btn-floating" title="Toggle Fullscreen">🖥️ Fullscreen</button>
+              <div class="run-top-left">
+                <span id="run-section-label" class="run-section-tag"></span>
+                <span id="immersive-speaker-badge">Speaker</span>
+                <span id="immersive-preset-badge">Activity</span>
+              </div>
+              <div class="run-top-right">
+                <button id="btn-toggle-fullscreen" class="btn-floating" title="Toggle Fullscreen">🖥️ Fullscreen</button>
+              </div>
             </div>
 
+            <!-- Center: clock + mini playlist -->
             <div class="timer-center-content">
-              <!-- Animated Glowing Circular Frame for Digits -->
               <div id="timer-digits-container" class="digits-ring-frame">
                 <div class="digits-text" id="display-time">00:00</div>
                 <div class="speech-status-label" id="speech-status">STARTING</div>
               </div>
 
-
+              <!-- Mini playlist panel -->
+              <div class="mini-playlist glass-panel" id="mini-playlist">
+                <div class="playlist-item playlist-prev" id="playlist-prev">
+                  <span class="pl-icon">✅</span>
+                  <span class="pl-text" id="pl-prev-text">—</span>
+                </div>
+                <div class="playlist-item playlist-current" id="playlist-current">
+                  <span class="pl-icon">▶</span>
+                  <span class="pl-text" id="pl-curr-text">—</span>
+                </div>
+                <div class="playlist-item playlist-next" id="playlist-next">
+                  <span class="pl-icon">⏭</span>
+                  <span class="pl-text" id="pl-next-text">—</span>
+                </div>
+              </div>
             </div>
 
-            <!-- Bottom Floating Control Center -->
+            <!-- Bottom controls -->
             <div class="floating-controls-panel glass-panel">
               <button id="btn-pause" class="btn-circle btn-warn" title="Pause Timer">
                 <span class="icon">⏸️</span> Pause
               </button>
-              <button id="btn-stop" class="btn-circle btn-danger" title="Finish and Save Speech">
-                <span class="icon">⏹️</span> Stop
+              <button id="btn-next-item" class="btn-circle btn-primary-circle" title="Next Item">
+                <span class="icon">⏭️</span> Next
               </button>
-              <button id="btn-reset" class="btn-circle btn-secondary" title="Discard Speech">
-                <span class="icon">🔄</span> Reset
+              <button id="btn-end-session" class="btn-circle btn-danger" title="End Session">
+                <span class="icon">⏹️</span> End
               </button>
             </div>
 
           </div>
-
         </div>
+      </section>
 
+      <!-- ================================================================
+           VIEW 3: SESSION REPORT
+      ================================================================ -->
+      <section id="report-view" class="view-hidden">
+        <div class="glass-card report-card">
+          <div class="report-header">
+            <h2 class="section-title">📊 Session Report</h2>
+            <div class="report-actions">
+              <button id="btn-download-report" class="toolbar-btn btn-add-item">📥 Download CSV</button>
+              <button id="btn-back-agenda" class="toolbar-btn btn-run">← Back to Agenda</button>
+            </div>
+          </div>
+          <div class="history-table-container">
+            <table id="report-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Speaker</th>
+                  <th>Planned Start</th>
+                  <th>Actual Start</th>
+                  <th>Planned (min)</th>
+                  <th>Actual</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="report-body"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
     </main>
-
   </div>
-  
+
+  <!-- ================================================================
+       SETTINGS MODAL
+  ================================================================ -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal-box glass-card">
+      <div class="modal-header">
+        <h2 class="section-title">⚙️ Settings</h2>
+        <button id="btn-close-settings" class="btn-floating">✕</button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-tab="club">🏛️ Club Info</button>
+        <button class="modal-tab" data-tab="roles">👥 Meeting Roles</button>
+        <button class="modal-tab" data-tab="officers">🎖️ Officers</button>
+        <button class="modal-tab" data-tab="prefs">🔧 Preferences</button>
+      </div>
+
+      <!-- Tab: Club Info -->
+      <div class="modal-tab-content active" id="tab-club">
+        <div class="settings-grid">
+          <div class="input-group">
+            <label>Club Name</label>
+            <input type="text" id="cfg-club-name" placeholder="e.g. Wipro Kochi Toastmasters Club">
+          </div>
+          <div class="input-group">
+            <label>Club Number</label>
+            <input type="text" id="cfg-club-number" placeholder="e.g. 7772212">
+          </div>
+          <div class="input-group">
+            <label>Area</label>
+            <input type="text" id="cfg-area" placeholder="e.g. 03">
+          </div>
+          <div class="input-group">
+            <label>Division</label>
+            <input type="text" id="cfg-division" placeholder="e.g. E">
+          </div>
+          <div class="input-group">
+            <label>District</label>
+            <input type="text" id="cfg-district" placeholder="e.g. 230">
+          </div>
+          <div class="input-group">
+            <label>Meeting Number</label>
+            <input type="number" id="cfg-meeting-number" placeholder="e.g. 301">
+          </div>
+          <div class="input-group">
+            <label>Meeting Date</label>
+            <input type="date" id="cfg-meeting-date">
+          </div>
+          <div class="input-group">
+            <label>Meeting Start Time</label>
+            <input type="time" id="cfg-meeting-start">
+          </div>
+          <div class="input-group">
+            <label>Venue</label>
+            <input type="text" id="cfg-venue" placeholder="e.g. TBD">
+          </div>
+          <div class="input-group span-2">
+            <label>Theme</label>
+            <input type="text" id="cfg-theme" placeholder="e.g. Symphony of Strength">
+          </div>
+          <div class="input-group span-2">
+            <label>Additional Header Notes</label>
+            <input type="text" id="cfg-notes" placeholder="e.g. Networking 1:15; Meeting starts 1:30 sharp">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Meeting Roles -->
+      <div class="modal-tab-content" id="tab-roles">
+        <div class="settings-grid">
+          <div class="input-group"><label>TMOD</label><input type="text" id="cfg-r-tmod" placeholder="TM Name"></div>
+          <div class="input-group"><label>President</label><input type="text" id="cfg-r-president" placeholder="TM Name"></div>
+          <div class="input-group"><label>General Evaluator</label><input type="text" id="cfg-r-ge" placeholder="TM Name"></div>
+          <div class="input-group"><label>Sergeant at Arms</label><input type="text" id="cfg-r-saa" placeholder="TM Name"></div>
+          <div class="input-group"><label>Timer</label><input type="text" id="cfg-r-timer" placeholder="TM Name"></div>
+          <div class="input-group"><label>Grammarian</label><input type="text" id="cfg-r-gram" placeholder="TM Name"></div>
+          <div class="input-group"><label>Ah Counter</label><input type="text" id="cfg-r-ah" placeholder="TM Name"></div>
+          <div class="input-group"><label>Listening Master</label><input type="text" id="cfg-r-lm" placeholder="TM Name"></div>
+          <div class="input-group"><label>Table Topics Master</label><input type="text" id="cfg-r-ttm" placeholder="TM Name"></div>
+          <div class="input-group"><label>Speech 1 (title)</label><input type="text" id="cfg-r-sp1-title" placeholder="Speech title"></div>
+          <div class="input-group"><label>Speech 1 Speaker</label><input type="text" id="cfg-r-sp1" placeholder="TM Name"></div>
+          <div class="input-group"><label>Speech 1 Evaluator</label><input type="text" id="cfg-r-ev1" placeholder="TM Name"></div>
+          <div class="input-group"><label>Speech 2 (title)</label><input type="text" id="cfg-r-sp2-title" placeholder="Speech title"></div>
+          <div class="input-group"><label>Speech 2 Speaker</label><input type="text" id="cfg-r-sp2" placeholder="TM Name"></div>
+          <div class="input-group"><label>Speech 2 Evaluator</label><input type="text" id="cfg-r-ev2" placeholder="TM Name"></div>
+        </div>
+      </div>
+
+      <!-- Tab: Club Officers -->
+      <div class="modal-tab-content" id="tab-officers">
+        <div class="settings-grid">
+          <div class="input-group"><label>President</label><input type="text" id="cfg-o-president" placeholder="TM Name"></div>
+          <div class="input-group"><label>VP Education</label><input type="text" id="cfg-o-vpe" placeholder="TM Name"></div>
+          <div class="input-group"><label>VP Membership</label><input type="text" id="cfg-o-vpm" placeholder="TM Name"></div>
+          <div class="input-group"><label>VP Public Relations</label><input type="text" id="cfg-o-vppr" placeholder="TM Name"></div>
+          <div class="input-group"><label>Secretary</label><input type="text" id="cfg-o-sec" placeholder="TM Name"></div>
+          <div class="input-group"><label>Treasurer</label><input type="text" id="cfg-o-tres" placeholder="TM Name"></div>
+          <div class="input-group"><label>Sergeant at Arms</label><input type="text" id="cfg-o-saa" placeholder="TM Name"></div>
+        </div>
+      </div>
+
+      <!-- Tab: Preferences -->
+      <div class="modal-tab-content" id="tab-prefs">
+        <div class="settings-list">
+          <div class="setting-item">
+            <div class="setting-desc">
+              <span class="setting-label">Show Timer Digits</span>
+              <span class="setting-hint">Displays actual numbers on color background</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setting-show-timer" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-desc">
+              <span class="setting-label">Prevent Screen Sleep (Wake Lock)</span>
+              <span class="setting-hint">Keep screen awake while running</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setting-wake-lock" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-desc">
+              <span class="setting-label">Accelerated Demo Mode</span>
+              <span class="setting-hint">1 second = 1 minute for quick testing</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setting-demo-mode">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-save-settings" class="action-btn btn-primary">💾 Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file input for JSON load -->
+  <input type="file" id="json-file-input" accept=".json" style="display:none">
+
   <script src="app.js"></script>
 </body>
 </html>
